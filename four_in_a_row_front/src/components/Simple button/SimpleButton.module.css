@@ -1,0 +1,29 @@
+.SimpleButton {
+    background-color: #2d57a7;
+    color : white;
+    border: none;
+    height: 100%;
+    min-width: 100px;
+}
+
+.SimpleButton.right {
+    margin-right: 5%;
+    float: right;
+}
+
+.SimpleButton:hover {
+    background-color: #2552a2;
+}
+
+.SimpleButton:active {
+    background-color: #0a2c69;
+}
+
+.SimpleButton.selected {
+    border: medium white;
+    background-color: #1c1ca6;
+}
+
+.Elem {
+    background-color: blue;
+}
