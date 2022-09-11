@@ -1,10 +1,22 @@
-import {React, useState} from 'react';
+import {React, useState, useEffect} from 'react';
 import classes from "./Game.module.css";
 
 const Game = (props) => {
 
-    let [gameArray, updateGameArray] = useState([[],[],[],[],[],[]]);
+    let [gameArray, updateGameArray] = useState([]);
     let [gameColor, updateGameColor] = useState('red');
+
+    async function getTestGameState() {
+        const response = await fetch('http://localhost:5000/game_test', {
+            method : 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        const resp = await response.json();
+        console.log(resp);
+        return resp;
+    }
 
     function getTile(color, index) {
         let color_style = ' ';
@@ -44,8 +56,11 @@ const Game = (props) => {
             </div>
         )
     }
-
-
+    if (gameArray.length === 0) {
+        getTestGameState().then(
+            resp => updateGameArray(resp.state)
+        )
+    }
     return (
         <div className={classes.GameField}>
             {gameArray.map((e, i) => getColumn(e, i))}
