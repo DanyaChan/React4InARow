@@ -1,11 +1,14 @@
+import { useEffect } from 'react';
 import {React, useState, useRef} from 'react';
 import classes from "./Game.module.css";
 
+const serverAddr = 'http://207.180.239.82:5000/';
 
 const Game = (props) => {
 
     let [gameArray, updateGameArray] = useState([]);
     let [gameId, updateGameId] = useState(null);
+    useEffect(subscribeToAGame, [gameId]);
     let inputState = useRef(null);
 
     function getTile(color, index) {
@@ -30,7 +33,7 @@ const Game = (props) => {
     }
 
     async function fetchNewGame() {
-        const response = await fetch('http://localhost:5000/game', {
+        const response = await fetch(serverAddr + 'game', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -48,14 +51,14 @@ const Game = (props) => {
         fetchNewGame().then(
             (resp) => {
                 updateGameArray(resp.game.state);
-                updateGameId(resp.id);
-                subscribeToAGame(resp.id);
+                updateGameId(resp.id, subscribeToAGame);
+
             }
         )
     }
 
     async function fetchJoinGame() {
-        const response = await fetch('http://localhost:5000/join', {
+        const response = await fetch(serverAddr + 'join', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -79,7 +82,7 @@ const Game = (props) => {
                 }
                 updateGameId(resp.id);
                 updateGameArray(resp.state);
-                subscribeToAGame(resp.id);
+                subscribeToAGame();
             }
         )
     }
@@ -91,7 +94,7 @@ const Game = (props) => {
     }
 
     async function fetchMakeMove(index) {
-        const response = await fetch('http://localhost:5000/move', {
+        const response = await fetch(serverAddr + 'move', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -120,23 +123,25 @@ const Game = (props) => {
         )
     }
 
-    async function fetchGameState(game_id) {
-        const response = await fetch('http://localhost:5000/game', {
+    async function fetchGameState() {
+        const response = await fetch(serverAddr + 'game', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'game_id': game_id,
+                'game_id': gameId,
             })
         });
         const resp = await response.json();
-        console.log(resp);
         return {...resp, 'status': response.status};
     }
 
-    function getGameState(game_id) {
-        fetchGameState(game_id).then(
+    function getGameState() {
+        if (!gameId) {
+            return;
+        }
+        fetchGameState(gameId).then(
             (resp) => {
                 if (resp.status !== 200) {
                     alert('ERROR:' + resp.message);
@@ -147,8 +152,8 @@ const Game = (props) => {
         )
     }
 
-    function subscribeToAGame(game_id) {
-        setInterval(() => getGameState(game_id), 100);
+    function subscribeToAGame() {
+        setInterval(() => getGameState(), 100);
     }
 
     return (
