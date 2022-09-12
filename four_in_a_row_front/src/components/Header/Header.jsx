@@ -8,7 +8,7 @@ const Header = (props) => {
             {
                 props.page_list ?
                 props.page_list.map((e) => {
-                    return <SimpleButton name={e} active={props.current_page === e}></SimpleButton>
+                    return <SimpleButton active={props.current_page === e}> {e} </SimpleButton>
                 }) : null
             }
             <SimpleButton name={'Login'} align_right={true}> </SimpleButton>

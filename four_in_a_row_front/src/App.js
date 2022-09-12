@@ -12,8 +12,7 @@ function App() {
     <div className="App">
       <Header page_list={page_list} current_page={'Main'}></Header>
         <h1 className={'MainTitle'}> Best 4 in a row in the world. </h1>
-        <h2>User id: {user_id}</h2>
-        <Game></Game>
+        <Game user_id={user_id}></Game>
     </div>
   );
 }
